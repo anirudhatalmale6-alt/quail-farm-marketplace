@@ -41,6 +41,7 @@ class LoginController extends Controller
                 'admin' => redirect()->route('admin.dashboard'),
                 'farmer' => redirect()->route('farmer.dashboard'),
                 'buyer' => redirect()->route('buyer.dashboard'),
+                'investor' => redirect()->route('investor.dashboard'),
                 default => redirect('/'),
             };
         }

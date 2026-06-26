@@ -113,7 +113,50 @@ class DatabaseSeeder extends Seeder
             'country' => 'US',
         ]);
 
-        // --- Product Categories ---
+        // --- Sample Investors ---
+        User::create([
+            'name' => 'Marcus Thompson',
+            'email' => 'marcus@quailinvest.com',
+            'password' => Hash::make('password'),
+            'role' => 'investor',
+            'status' => 'active',
+            'company_name' => 'Quail Investments LLC',
+            'phone' => '555-0301',
+            'city' => 'San Francisco',
+            'state' => 'CA',
+            'country' => 'US',
+            'bio' => 'Angel investor specializing in sustainable agriculture and quail farming operations.',
+            'investment_budget' => 500000,
+            'investment_interests' => 'Organic quail farms, large-scale egg production, sustainable farming practices',
+        ]);
+
+        User::create([
+            'name' => 'Patricia Wells',
+            'email' => 'patricia@agriventures.com',
+            'password' => Hash::make('password'),
+            'role' => 'investor',
+            'status' => 'active',
+            'company_name' => 'AgriVentures Capital',
+            'phone' => '555-0302',
+            'city' => 'Dallas',
+            'state' => 'TX',
+            'country' => 'US',
+            'bio' => 'Venture capital firm focused on poultry and small livestock farming investments.',
+            'investment_budget' => 1000000,
+            'investment_interests' => 'Quail breeding programs, processing facilities, export operations',
+        ]);
+
+        // --- Marketplace Categories (Mapp) ---
+        // 1. Quail (live birds)
+        $catQuail = Category::create([
+            'name' => 'Quail',
+            'slug' => 'quail',
+            'type' => 'product',
+            'icon' => null,
+            'status' => true,
+        ]);
+
+        // 2. Quail Eggs
         $catFreshEggs = Category::create([
             'name' => 'Fresh Eggs',
             'slug' => 'fresh-eggs',
@@ -138,40 +181,119 @@ class DatabaseSeeder extends Seeder
             'status' => true,
         ]);
 
-        // --- Supply Categories ---
+        // 3. Quail Food (feed/nutrition)
         Category::create([
-            'name' => 'Feed',
-            'slug' => 'feed',
+            'name' => 'Quail Feed',
+            'slug' => 'quail-feed',
             'type' => 'supply',
             'icon' => null,
             'status' => true,
         ]);
 
         Category::create([
-            'name' => 'Equipment',
-            'slug' => 'equipment',
+            'name' => 'Supplements & Vitamins',
+            'slug' => 'supplements-vitamins',
             'type' => 'supply',
             'icon' => null,
             'status' => true,
         ]);
 
         Category::create([
-            'name' => 'Veterinary',
-            'slug' => 'veterinary',
+            'name' => 'Veterinary Medicine',
+            'slug' => 'veterinary-medicine',
+            'type' => 'supply',
+            'icon' => null,
+            'status' => true,
+        ]);
+
+        // 4. Quail Transport
+        Category::create([
+            'name' => 'Transport Services',
+            'slug' => 'transport-services',
             'type' => 'supply',
             'icon' => null,
             'status' => true,
         ]);
 
         Category::create([
-            'name' => 'Transport',
-            'slug' => 'transport',
+            'name' => 'Shipping Supplies',
+            'slug' => 'shipping-supplies',
+            'type' => 'supply',
+            'icon' => null,
+            'status' => true,
+        ]);
+
+        // 5. Quail Farming Machines
+        Category::create([
+            'name' => 'Egg Incubators',
+            'slug' => 'egg-incubators',
+            'type' => 'supply',
+            'icon' => null,
+            'status' => true,
+        ]);
+
+        Category::create([
+            'name' => 'Brooders & Heaters',
+            'slug' => 'brooders-heaters',
+            'type' => 'supply',
+            'icon' => null,
+            'status' => true,
+        ]);
+
+        Category::create([
+            'name' => 'Cages & Housing',
+            'slug' => 'cages-housing',
+            'type' => 'supply',
+            'icon' => null,
+            'status' => true,
+        ]);
+
+        Category::create([
+            'name' => 'Feeders & Waterers',
+            'slug' => 'feeders-waterers',
+            'type' => 'supply',
+            'icon' => null,
+            'status' => true,
+        ]);
+
+        Category::create([
+            'name' => 'Egg Processing Equipment',
+            'slug' => 'egg-processing-equipment',
             'type' => 'supply',
             'icon' => null,
             'status' => true,
         ]);
 
         // --- Sample Products ---
+        // Live Quail product
+        Product::create([
+            'user_id' => $farmer1->id,
+            'category_id' => $catQuail->id,
+            'name' => 'Live Coturnix Quail - Breeding Pair',
+            'slug' => 'live-coturnix-quail-breeding-pair-' . Str::random(5),
+            'description' => 'Healthy breeding pair of Coturnix quail. Excellent egg layers, producing 200-300 eggs per year. Ideal for starting or expanding your flock.',
+            'price' => 25.00,
+            'unit' => 'pair',
+            'quantity_available' => 30,
+            'min_order' => 1,
+            'images' => [],
+            'status' => 'active',
+        ]);
+
+        Product::create([
+            'user_id' => $farmer2->id,
+            'category_id' => $catQuail->id,
+            'name' => 'Bobwhite Quail - Day Old Chicks',
+            'slug' => 'bobwhite-quail-day-old-chicks-' . Str::random(5),
+            'description' => 'Day-old Bobwhite quail chicks, vaccinated and health-checked. Perfect for raising game birds or egg production.',
+            'price' => 3.50,
+            'unit' => 'each',
+            'quantity_available' => 500,
+            'min_order' => 25,
+            'images' => [],
+            'status' => 'active',
+        ]);
+
         Product::create([
             'user_id' => $farmer1->id,
             'category_id' => $catFreshEggs->id,

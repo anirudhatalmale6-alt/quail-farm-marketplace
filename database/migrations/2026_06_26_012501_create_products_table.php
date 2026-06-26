@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description');
             $table->decimal('price', 10, 2);
-            $table->enum('unit', ['piece', 'dozen', 'tray', 'crate']);
+            $table->enum('unit', ['piece', 'dozen', 'tray', 'crate', 'pair', 'each', 'kg', 'lb', 'bag']);
             $table->integer('quantity_available');
             $table->integer('min_order')->default(1);
             $table->json('images')->nullable();

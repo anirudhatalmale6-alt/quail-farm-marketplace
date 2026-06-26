@@ -7,6 +7,7 @@ use App\Http\Controllers\StreamController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -46,6 +47,11 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // Profile
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/{id}', [ProfileController::class, 'show'])->name('profile.show');
 
     // Subscription
     Route::get('/subscription', [SubscriptionController::class, 'mySubscription'])->name('subscription.status');
@@ -127,6 +133,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/investments', [App\Http\Controllers\Admin\InvestmentController::class, 'index'])->name('investments.index');
     Route::get('/investments/{id}', [App\Http\Controllers\Admin\InvestmentController::class, 'show'])->name('investments.show');
     Route::patch('/investments/{id}/review', [App\Http\Controllers\Admin\InvestmentController::class, 'review'])->name('investments.review');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Investor Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('investor')->name('investor.')->middleware(['auth', 'investor'])->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Investor\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/farmers', [App\Http\Controllers\Investor\FarmerBrowseController::class, 'index'])->name('farmers.index');
+    Route::get('/farmers/{id}', [App\Http\Controllers\Investor\FarmerBrowseController::class, 'show'])->name('farmers.show');
+    Route::post('/invest/{applicationId}', [App\Http\Controllers\Investor\FarmerBrowseController::class, 'invest'])->name('invest');
 });
 
 /*

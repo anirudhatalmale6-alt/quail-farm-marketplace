@@ -32,8 +32,15 @@ class User extends Authenticatable
         'bio',
         'farm_name',
         'business_name',
+        'company_name',
+        'website',
+        'investment_budget',
+        'investment_interests',
         'subscription_plan',
         'is_featured',
+        'profile_picture',
+        'last_seen_at',
+        'is_online',
     ];
 
     /**
@@ -56,6 +63,9 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_seen_at' => 'datetime',
+            'is_online' => 'boolean',
+            'investment_budget' => 'decimal:2',
         ];
     }
 
@@ -89,6 +99,25 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function isInvestor(): bool
+    {
+        return $this->role === 'investor';
+    }
+
+    public function isOnlineNow(): bool
+    {
+        if (!$this->last_seen_at) return false;
+        return $this->last_seen_at->diffInMinutes(now()) < 5;
+    }
+
+    public function getProfilePictureUrlAttribute(): string
+    {
+        if ($this->profile_picture) {
+            return asset('storage/' . $this->profile_picture);
+        }
+        return $this->avatar;
     }
 
     /**

@@ -16,7 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'farmer' => \App\Http\Middleware\FarmerMiddleware::class,
             'buyer' => \App\Http\Middleware\BuyerMiddleware::class,
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'investor' => \App\Http\Middleware\InvestorMiddleware::class,
         ]);
+        $middleware->append(\App\Http\Middleware\TrackLastSeen::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
