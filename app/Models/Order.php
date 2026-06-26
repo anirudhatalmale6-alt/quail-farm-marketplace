@@ -30,6 +30,13 @@ class Order extends Model
         'buyer_notes',
         'farmer_notes',
         'delivered_at',
+        'buyer_payment_confirmed',
+        'buyer_payment_confirmed_at',
+        'seller_payment_confirmed',
+        'seller_payment_confirmed_at',
+        'payment_reference',
+        'payment_type',
+        'is_credit_order',
     ];
 
     /**
@@ -45,6 +52,11 @@ class Order extends Model
             'commission_amount' => 'decimal:2',
             'total' => 'decimal:2',
             'commission_rate' => 'decimal:2',
+            'buyer_payment_confirmed' => 'boolean',
+            'buyer_payment_confirmed_at' => 'datetime',
+            'seller_payment_confirmed' => 'boolean',
+            'seller_payment_confirmed_at' => 'datetime',
+            'is_credit_order' => 'boolean',
         ];
     }
 
@@ -108,5 +120,13 @@ class Order extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    /**
+     * Get the credit order record for this order.
+     */
+    public function creditOrder()
+    {
+        return $this->hasOne(CreditOrder::class);
     }
 }

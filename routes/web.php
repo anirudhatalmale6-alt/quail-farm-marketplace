@@ -49,6 +49,7 @@ Route::prefix('farmer')->name('farmer.')->middleware(['auth', 'farmer'])->group(
     Route::get('/orders', [App\Http\Controllers\Farmer\OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [App\Http\Controllers\Farmer\OrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{id}/status', [App\Http\Controllers\Farmer\OrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::patch('/orders/{id}/confirm-payment', [App\Http\Controllers\Farmer\OrderController::class, 'confirmPayment'])->name('orders.confirm-payment');
 });
 
 /*
@@ -63,6 +64,12 @@ Route::prefix('buyer')->name('buyer.')->middleware(['auth', 'buyer'])->group(fun
     Route::get('/orders', [App\Http\Controllers\Buyer\OrderController::class, 'index'])->name('orders.index');
     Route::post('/orders', [App\Http\Controllers\Buyer\OrderController::class, 'store'])->name('orders.store');
     Route::get('/orders/{id}', [App\Http\Controllers\Buyer\OrderController::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{id}/confirm-payment', [App\Http\Controllers\Buyer\OrderController::class, 'confirmPayment'])->name('orders.confirm-payment');
+
+    // Credit system
+    Route::get('/credit', [App\Http\Controllers\Buyer\CreditController::class, 'index'])->name('credit.index');
+    Route::get('/credit/apply', [App\Http\Controllers\Buyer\CreditController::class, 'apply'])->name('credit.apply');
+    Route::post('/credit', [App\Http\Controllers\Buyer\CreditController::class, 'store'])->name('credit.store');
 });
 
 /*
@@ -86,6 +93,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Categories management
     Route::resource('/categories', App\Http\Controllers\Admin\CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
+
+    // Credit management
+    Route::get('/credits', [App\Http\Controllers\Admin\CreditController::class, 'index'])->name('credits.index');
+    Route::get('/credits/{id}', [App\Http\Controllers\Admin\CreditController::class, 'show'])->name('credits.show');
+    Route::patch('/credits/{id}/approve', [App\Http\Controllers\Admin\CreditController::class, 'approve'])->name('credits.approve');
+    Route::patch('/credits/{id}/reject', [App\Http\Controllers\Admin\CreditController::class, 'reject'])->name('credits.reject');
 });
 
 /*

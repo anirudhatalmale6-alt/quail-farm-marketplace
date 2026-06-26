@@ -66,4 +66,26 @@ class OrderController extends Controller
         return redirect()->route('farmer.orders.show', $order->id)
             ->with('success', 'Order status updated to ' . ucfirst($validated['status']) . '.');
     }
+
+    /**
+     * Farmer confirms they received payment.
+     */
+    public function confirmPayment(Request $request, $id)
+    {
+        $order = Order::where('farmer_id', Auth::id())
+            ->findOrFail($id);
+
+        $order->update([
+            'seller_payment_confirmed' => true,
+            'seller_payment_confirmed_at' => now(),
+        ]);
+
+        // Auto-update payment_status if both parties confirmed
+        if ($order->buyer_payment_confirmed) {
+            $order->update(['payment_status' => 'paid']);
+        }
+
+        return redirect()->route('farmer.orders.show', $order->id)
+            ->with('success', 'Payment receipt confirmed!' . ($order->buyer_payment_confirmed ? ' Payment marked as complete.' : ' Waiting for buyer to confirm payment.'));
+    }
 }

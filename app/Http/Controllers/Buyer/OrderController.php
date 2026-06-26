@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Buyer;
 
 use App\Http\Controllers\Controller;
 use App\Models\CommissionSetting;
+use App\Models\CreditApplication;
+use App\Models\CreditOrder;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -40,6 +42,7 @@ class OrderController extends Controller
             'quantity' => 'required|integer|min:1',
             'shipping_address' => 'required|string|max:500',
             'buyer_notes' => 'nullable|string|max:1000',
+            'payment_method' => 'required|in:paypal,bitcoin,credit',
         ]);
 
         $product = Product::where('status', 'active')
@@ -60,7 +63,36 @@ class OrderController extends Controller
         $commissionAmount = $subtotal * ($commissionRate / 100);
         $total = $subtotal + $commissionAmount;
 
-        $order = DB::transaction(function () use ($validated, $product, $subtotal, $commissionRate, $commissionAmount, $total) {
+        $isCreditOrder = $validated['payment_method'] === 'credit';
+
+        // For credit orders, validate buyer has approved credit with enough balance
+        $creditApplication = null;
+        if ($isCreditOrder) {
+            $creditApplication = CreditApplication::where('buyer_id', Auth::id())
+                ->active()
+                ->first();
+
+            if (!$creditApplication) {
+                return back()->withErrors([
+                    'payment_method' => 'You do not have an active credit line. Please apply for credit first.'
+                ])->withInput();
+            }
+
+            if ($creditApplication->available_credit < $total) {
+                return back()->withErrors([
+                    'payment_method' => 'Insufficient credit balance. Available: $' . number_format($creditApplication->available_credit, 2)
+                ])->withInput();
+            }
+
+            // Check if credit has expired
+            if ($creditApplication->expires_at && $creditApplication->expires_at->isPast()) {
+                return back()->withErrors([
+                    'payment_method' => 'Your credit line has expired. Please apply for a new one.'
+                ])->withInput();
+            }
+        }
+
+        $order = DB::transaction(function () use ($validated, $product, $subtotal, $commissionRate, $commissionAmount, $total, $isCreditOrder, $creditApplication) {
             $order = Order::create([
                 'buyer_id' => Auth::id(),
                 'farmer_id' => $product->user_id,
@@ -70,9 +102,11 @@ class OrderController extends Controller
                 'total' => $total,
                 'status' => 'pending',
                 'payment_status' => 'pending',
-                'payment_method' => 'cod',
+                'payment_method' => $isCreditOrder ? 'credit' : $validated['payment_method'],
                 'shipping_address' => $validated['shipping_address'],
                 'buyer_notes' => $validated['buyer_notes'] ?? null,
+                'payment_type' => $isCreditOrder ? 'credit' : 'direct',
+                'is_credit_order' => $isCreditOrder,
             ]);
 
             OrderItem::create([
@@ -86,11 +120,55 @@ class OrderController extends Controller
             // Decrease product stock
             $product->decrement('quantity_available', $validated['quantity']);
 
+            // For credit orders, create CreditOrder record and deduct from available credit
+            if ($isCreditOrder && $creditApplication) {
+                CreditOrder::create([
+                    'order_id' => $order->id,
+                    'credit_application_id' => $creditApplication->id,
+                    'amount' => $total,
+                    'due_date' => now()->addDays($creditApplication->term_days),
+                    'status' => 'pending',
+                ]);
+
+                $creditApplication->decrement('available_credit', $total);
+            }
+
             return $order;
         });
 
+        $successMsg = $isCreditOrder
+            ? 'Order placed on credit! Payment due in ' . $creditApplication->term_days . ' days.'
+            : 'Order placed successfully! Please send payment via ' . ucfirst($validated['payment_method']) . ' and confirm below.';
+
         return redirect()->route('buyer.orders.show', $order->id)
-            ->with('success', 'Order placed successfully!');
+            ->with('success', $successMsg);
+    }
+
+    /**
+     * Buyer confirms they have sent payment.
+     */
+    public function confirmPayment(Request $request, $id)
+    {
+        $order = Order::where('buyer_id', Auth::id())
+            ->findOrFail($id);
+
+        $validated = $request->validate([
+            'payment_reference' => 'required|string|max:500',
+        ]);
+
+        $order->update([
+            'buyer_payment_confirmed' => true,
+            'buyer_payment_confirmed_at' => now(),
+            'payment_reference' => $validated['payment_reference'],
+        ]);
+
+        // Auto-update payment_status if both parties confirmed
+        if ($order->seller_payment_confirmed) {
+            $order->update(['payment_status' => 'paid']);
+        }
+
+        return redirect()->route('buyer.orders.show', $order->id)
+            ->with('success', 'Payment confirmed! Waiting for seller to confirm receipt.');
     }
 
     /**
