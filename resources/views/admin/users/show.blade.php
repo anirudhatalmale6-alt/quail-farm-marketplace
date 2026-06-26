@@ -101,7 +101,7 @@
         <!-- Stats & Orders -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Quick Stats -->
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-3 gap-4">
                 <div class="bg-[#1e293b] rounded-xl shadow-sm border border-[#374151] p-6 text-center">
                     <p class="text-sm text-[#9ca3af]">Total Orders</p>
                     <p class="text-2xl font-bold text-white mt-1">{{ number_format($totalOrders) }}</p>
@@ -110,7 +110,46 @@
                     <p class="text-sm text-[#9ca3af]">{{ $user->isFarmer() ? 'Total Revenue' : 'Total Spent' }}</p>
                     <p class="text-2xl font-bold text-[#d4a853] mt-1">${{ number_format($totalRevenue, 2) }}</p>
                 </div>
+                <div class="bg-gradient-to-br from-[#10b981]/20 to-[#059669]/20 rounded-xl shadow-sm border border-[#10b981]/30 p-6 text-center">
+                    <p class="text-sm text-[#10b981]">Wallet Balance</p>
+                    <p class="text-2xl font-bold text-[#10b981] mt-1">${{ number_format($user->balance, 2) }}</p>
+                </div>
             </div>
+
+            <!-- Balance Management -->
+            @if(!$user->isAdmin())
+                <div class="bg-[#1e293b] rounded-xl shadow-sm border border-[#374151] p-6" x-data="{ action: 'add' }">
+                    <h3 class="text-lg font-semibold text-white mb-4">Manage Balance</h3>
+                    <form method="POST" action="{{ route('admin.users.adjust-balance', $user->id) }}">
+                        @csrf
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
+                            <div>
+                                <label class="block text-sm text-[#9ca3af] mb-1">Action</label>
+                                <select name="action" x-model="action" class="w-full bg-[#0f1419] border border-[#374151] text-white rounded-lg px-3 py-2 focus:border-[#d4a853] focus:outline-none">
+                                    <option value="add">Add Funds</option>
+                                    <option value="deduct">Deduct Funds</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-[#9ca3af] mb-1">Amount ($)</label>
+                                <input type="number" name="amount" step="0.01" min="0.01" required placeholder="0.00"
+                                    class="w-full bg-[#0f1419] border border-[#374151] text-white rounded-lg px-3 py-2 focus:border-[#d4a853] focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-[#9ca3af] mb-1">Reason</label>
+                                <input type="text" name="reason" required placeholder="Reason for adjustment"
+                                    class="w-full bg-[#0f1419] border border-[#374151] text-white rounded-lg px-3 py-2 focus:border-[#d4a853] focus:outline-none">
+                            </div>
+                            <div>
+                                <button type="submit" class="w-full py-2 rounded-lg text-sm font-semibold transition"
+                                    :class="action === 'add' ? 'bg-[#10b981] text-white hover:bg-[#059669]' : 'bg-[#ef4444] text-white hover:bg-red-700'">
+                                    <span x-text="action === 'add' ? 'Add Funds' : 'Deduct Funds'"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            @endif
 
             <!-- Recent Orders -->
             <div class="bg-[#1e293b] rounded-xl shadow-sm border border-[#374151] p-6">

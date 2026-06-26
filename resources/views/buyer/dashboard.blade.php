@@ -57,20 +57,20 @@
             </div>
         </div>
 
-        {{-- Favorite Farmers --}}
-        <div class="bg-[#1e293b] rounded-xl shadow-sm border border-[#374151] p-6 hover:shadow-lg hover:shadow-[#d4a853]/5 transition-shadow">
+        {{-- Wallet Balance --}}
+        <a href="{{ route('wallet.index') }}" class="bg-gradient-to-br from-[#10b981]/20 to-[#059669]/20 rounded-xl shadow-sm border border-[#10b981]/30 p-6 hover:shadow-lg hover:shadow-[#10b981]/10 transition-shadow block">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-[#9ca3af]">Favorite Farmers</p>
-                    <p class="text-3xl font-bold text-white mt-1">{{ $favoriteFarmers }}</p>
+                    <p class="text-sm font-medium text-[#10b981]">Wallet Balance</p>
+                    <p class="text-3xl font-bold text-[#10b981] mt-1">${{ number_format(Auth::user()->balance, 2) }}</p>
                 </div>
-                <div class="bg-rose-500/10 rounded-lg p-3">
-                    <svg class="w-8 h-8 text-rose-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                <div class="bg-[#10b981]/10 rounded-lg p-3">
+                    <svg class="w-8 h-8 text-[#10b981]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                     </svg>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">

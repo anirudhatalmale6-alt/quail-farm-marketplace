@@ -8,6 +8,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -52,6 +53,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile/{id}', [ProfileController::class, 'show'])->name('profile.show');
+
+    // Wallet
+    Route::get('/wallet', [WalletController::class, 'index'])->name('wallet.index');
 
     // Subscription
     Route::get('/subscription', [SubscriptionController::class, 'mySubscription'])->name('subscription.status');
@@ -112,6 +116,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Users management
     Route::resource('/users', App\Http\Controllers\Admin\UserController::class)->only(['index', 'show', 'destroy']);
     Route::patch('/users/{id}/status', [App\Http\Controllers\Admin\UserController::class, 'updateStatus'])->name('users.update-status');
+    Route::post('/users/{id}/balance', [App\Http\Controllers\Admin\UserController::class, 'adjustBalance'])->name('users.adjust-balance');
 
     // Commissions management
     Route::resource('/commissions', App\Http\Controllers\Admin\CommissionController::class)->only(['index', 'store', 'update', 'destroy']);

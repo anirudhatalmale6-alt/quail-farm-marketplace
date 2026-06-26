@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\BalanceTransaction;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -86,6 +88,31 @@ class UserController extends Controller
 
         return redirect()->back()
             ->with('success', "User {$user->name} status updated to {$validated['status']}.");
+    }
+
+    public function adjustBalance(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'action' => 'required|in:add,deduct',
+            'amount' => 'required|numeric|min:0.01|max:999999.99',
+            'reason' => 'required|string|max:500',
+        ]);
+
+        $amount = (float) $validated['amount'];
+
+        if ($validated['action'] === 'deduct' && !$user->hasEnoughBalance($amount)) {
+            return back()->with('error', 'User does not have enough balance. Current: $' . number_format($user->balance, 2));
+        }
+
+        if ($validated['action'] === 'add') {
+            $user->addBalance($amount, 'admin_credit', $validated['reason'], null, Auth::id());
+        } else {
+            $user->deductBalance($amount, 'admin_debit', $validated['reason'], null, Auth::id());
+        }
+
+        return back()->with('success', ($validated['action'] === 'add' ? 'Added' : 'Deducted') . ' $' . number_format($amount, 2) . ' ' . ($validated['action'] === 'add' ? 'to' : 'from') . ' ' . $user->name . "'s balance.");
     }
 
     /**

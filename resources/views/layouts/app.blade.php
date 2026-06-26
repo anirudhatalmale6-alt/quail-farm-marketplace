@@ -221,7 +221,14 @@
                                 <div class="px-4 py-3 border-b border-[#374151]">
                                     <p class="text-sm font-medium text-white">{{ auth()->user()->name }}</p>
                                     <p class="text-xs text-[#9ca3af] capitalize">{{ auth()->user()->role }}</p>
+                                    <p class="text-xs text-[#10b981] font-semibold mt-1">Balance: ${{ number_format(auth()->user()->balance, 2) }}</p>
                                 </div>
+                                <a href="{{ route('wallet.index') }}" class="block px-4 py-2 text-sm text-[#10b981] hover:bg-[#374151] hover:text-[#34d399] transition-colors font-medium">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                                        Wallet
+                                    </span>
+                                </a>
                                 <a href="{{ route('profile.show', auth()->id()) }}" class="block px-4 py-2 text-sm text-[#9ca3af] hover:bg-[#374151] hover:text-white transition-colors">My Profile</a>
                                 <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-[#9ca3af] hover:bg-[#374151] hover:text-white transition-colors">Edit Profile</a>
                                 <form method="POST" action="{{ route('logout') }}">

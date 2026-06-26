@@ -42,7 +42,7 @@ class OrderController extends Controller
             'quantity' => 'required|integer|min:1',
             'shipping_address' => 'required|string|max:500',
             'buyer_notes' => 'nullable|string|max:1000',
-            'payment_method' => 'required|in:paypal,bitcoin,credit',
+            'payment_method' => 'required|in:paypal,bitcoin,credit,balance',
         ]);
 
         $product = Product::where('status', 'active')
@@ -62,6 +62,14 @@ class OrderController extends Controller
         $commissionRate = CommissionSetting::getRate($subtotal) ?? 5.00;
         $commissionAmount = $subtotal * ($commissionRate / 100);
         $total = $subtotal + $commissionAmount;
+
+        $isBalanceOrder = $validated['payment_method'] === 'balance';
+
+        if ($isBalanceOrder && !Auth::user()->hasEnoughBalance($total)) {
+            return back()->withErrors([
+                'payment_method' => 'Insufficient balance. Your balance: $' . number_format(Auth::user()->balance, 2) . ', Order total: $' . number_format($total, 2),
+            ])->withInput();
+        }
 
         $isCreditOrder = $validated['payment_method'] === 'credit';
 
@@ -92,7 +100,9 @@ class OrderController extends Controller
             }
         }
 
-        $order = DB::transaction(function () use ($validated, $product, $subtotal, $commissionRate, $commissionAmount, $total, $isCreditOrder, $creditApplication) {
+        $order = DB::transaction(function () use ($validated, $product, $subtotal, $commissionRate, $commissionAmount, $total, $isCreditOrder, $creditApplication, $isBalanceOrder) {
+            $paymentMethod = $isBalanceOrder ? 'balance' : ($isCreditOrder ? 'credit' : $validated['payment_method']);
+
             $order = Order::create([
                 'buyer_id' => Auth::id(),
                 'farmer_id' => $product->user_id,
@@ -100,12 +110,12 @@ class OrderController extends Controller
                 'commission_rate' => $commissionRate,
                 'commission_amount' => $commissionAmount,
                 'total' => $total,
-                'status' => 'pending',
-                'payment_status' => 'pending',
-                'payment_method' => $isCreditOrder ? 'credit' : $validated['payment_method'],
+                'status' => $isBalanceOrder ? 'confirmed' : 'pending',
+                'payment_status' => $isBalanceOrder ? 'paid' : 'pending',
+                'payment_method' => $paymentMethod,
                 'shipping_address' => $validated['shipping_address'],
                 'buyer_notes' => $validated['buyer_notes'] ?? null,
-                'payment_type' => $isCreditOrder ? 'credit' : 'direct',
+                'payment_type' => $isCreditOrder ? 'credit' : ($isBalanceOrder ? 'balance' : 'direct'),
                 'is_credit_order' => $isCreditOrder,
             ]);
 
@@ -133,12 +143,23 @@ class OrderController extends Controller
                 $creditApplication->decrement('available_credit', $total);
             }
 
+            if ($isBalanceOrder) {
+                $buyer = Auth::user();
+                $buyer->deductBalance($total, 'purchase', 'Order #' . $order->order_number, $order->id);
+
+                $farmer = $product->user;
+                $farmerAmount = $subtotal - $commissionAmount;
+                $farmer->addBalance($farmerAmount, 'sale', 'Sale from Order #' . $order->order_number, $order->id);
+            }
+
             return $order;
         });
 
-        $successMsg = $isCreditOrder
-            ? 'Order placed on credit! Payment due in ' . $creditApplication->term_days . ' days.'
-            : 'Order placed successfully! Please send payment via ' . ucfirst($validated['payment_method']) . ' and confirm below.';
+        $successMsg = $isBalanceOrder
+            ? 'Order placed and paid from your balance! $' . number_format($total, 2) . ' deducted.'
+            : ($isCreditOrder
+                ? 'Order placed on credit! Payment due in ' . $creditApplication->term_days . ' days.'
+                : 'Order placed successfully! Please send payment via ' . ucfirst($validated['payment_method']) . ' and confirm below.');
 
         return redirect()->route('buyer.orders.show', $order->id)
             ->with('success', $successMsg);

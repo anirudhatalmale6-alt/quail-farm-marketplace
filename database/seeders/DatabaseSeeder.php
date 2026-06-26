@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'admin',
             'status' => 'active',
+            'balance' => 10000.00,
         ]);
 
         // --- Sample Farmers ---
@@ -43,6 +44,7 @@ class DatabaseSeeder extends Seeder
             'state' => 'PA',
             'country' => 'US',
             'bio' => 'Third-generation quail farmer specializing in organic, free-range quail eggs.',
+            'balance' => 2500.00,
         ]);
 
         $farmer2 = User::create([
@@ -57,6 +59,7 @@ class DatabaseSeeder extends Seeder
             'state' => 'TX',
             'country' => 'US',
             'bio' => 'Specializing in Coturnix and Bobwhite quail breeds with certified organic practices.',
+            'balance' => 1800.00,
         ]);
 
         $farmer3 = User::create([
@@ -71,6 +74,7 @@ class DatabaseSeeder extends Seeder
             'state' => 'CA',
             'country' => 'US',
             'bio' => 'Large-scale quail operation supplying restaurants and retailers across California.',
+            'balance' => 950.00,
         ]);
 
         // --- Sample Buyers ---
@@ -85,6 +89,7 @@ class DatabaseSeeder extends Seeder
             'city' => 'New York',
             'state' => 'NY',
             'country' => 'US',
+            'balance' => 5000.00,
         ]);
 
         User::create([
@@ -98,6 +103,7 @@ class DatabaseSeeder extends Seeder
             'city' => 'Chicago',
             'state' => 'IL',
             'country' => 'US',
+            'balance' => 3200.00,
         ]);
 
         User::create([
@@ -111,6 +117,7 @@ class DatabaseSeeder extends Seeder
             'city' => 'Portland',
             'state' => 'OR',
             'country' => 'US',
+            'balance' => 1500.00,
         ]);
 
         // --- Sample Investors ---
@@ -128,6 +135,7 @@ class DatabaseSeeder extends Seeder
             'bio' => 'Angel investor specializing in sustainable agriculture and quail farming operations.',
             'investment_budget' => 500000,
             'investment_interests' => 'Organic quail farms, large-scale egg production, sustainable farming practices',
+            'balance' => 50000.00,
         ]);
 
         User::create([
@@ -144,6 +152,7 @@ class DatabaseSeeder extends Seeder
             'bio' => 'Venture capital firm focused on poultry and small livestock farming investments.',
             'investment_budget' => 1000000,
             'investment_interests' => 'Quail breeding programs, processing facilities, export operations',
+            'balance' => 100000.00,
         ]);
 
         // --- Marketplace Categories (Mapp) ---

@@ -137,12 +137,23 @@
                     {{-- Payment Method --}}
                     <div>
                         <label class="block text-sm font-medium text-[#9ca3af] mb-2">Payment Method</label>
-                        <div class="grid grid-cols-3 gap-3">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                             <label class="relative cursor-pointer">
-                                <input type="radio" name="payment_method" value="paypal" class="peer sr-only" checked>
+                                <input type="radio" name="payment_method" value="balance" class="peer sr-only" checked>
+                                <div class="flex flex-col items-center justify-center px-3 py-3 rounded-lg border-2 transition-all
+                                            peer-checked:border-[#10b981] peer-checked:bg-[#10b981]/10 border-[#374151] bg-[#1e293b]">
+                                    <svg class="w-6 h-6 text-[#10b981] mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                    </svg>
+                                    <span class="text-xs text-[#10b981] font-medium">Balance</span>
+                                    <span class="text-[10px] text-[#10b981]/70">${{ number_format(Auth::user()->balance, 2) }}</span>
+                                </div>
+                            </label>
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="payment_method" value="paypal" class="peer sr-only">
                                 <div class="flex flex-col items-center justify-center px-3 py-3 rounded-lg border-2 transition-all
                                             peer-checked:border-[#d4a853] peer-checked:bg-[#d4a853]/10 border-[#374151] bg-[#1e293b]">
-                                    <svg class="w-6 h-6 text-[#9ca3af] peer-checked:text-[#d4a853] mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-6 h-6 text-[#9ca3af] mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                                     </svg>
                                     <span class="text-xs text-[#9ca3af] font-medium">PayPal</span>

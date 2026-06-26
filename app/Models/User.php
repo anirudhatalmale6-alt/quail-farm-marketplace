@@ -41,6 +41,7 @@ class User extends Authenticatable
         'profile_picture',
         'last_seen_at',
         'is_online',
+        'balance',
     ];
 
     /**
@@ -66,6 +67,7 @@ class User extends Authenticatable
             'last_seen_at' => 'datetime',
             'is_online' => 'boolean',
             'investment_budget' => 'decimal:2',
+            'balance' => 'decimal:2',
         ];
     }
 
@@ -198,6 +200,48 @@ class User extends Authenticatable
     public function investmentApplications()
     {
         return $this->hasMany(InvestmentApplication::class);
+    }
+
+    public function balanceTransactions()
+    {
+        return $this->hasMany(BalanceTransaction::class);
+    }
+
+    public function addBalance(float $amount, string $type, string $description, ?int $orderId = null, ?int $performedBy = null): BalanceTransaction
+    {
+        $this->increment('balance', $amount);
+        $this->refresh();
+
+        return BalanceTransaction::create([
+            'user_id' => $this->id,
+            'type' => $type,
+            'amount' => $amount,
+            'balance_after' => $this->balance,
+            'description' => $description,
+            'related_order_id' => $orderId,
+            'performed_by' => $performedBy,
+        ]);
+    }
+
+    public function deductBalance(float $amount, string $type, string $description, ?int $orderId = null, ?int $performedBy = null): BalanceTransaction
+    {
+        $this->decrement('balance', $amount);
+        $this->refresh();
+
+        return BalanceTransaction::create([
+            'user_id' => $this->id,
+            'type' => $type,
+            'amount' => -$amount,
+            'balance_after' => $this->balance,
+            'description' => $description,
+            'related_order_id' => $orderId,
+            'performed_by' => $performedBy,
+        ]);
+    }
+
+    public function hasEnoughBalance(float $amount): bool
+    {
+        return $this->balance >= $amount;
     }
 
     /**

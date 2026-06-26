@@ -23,6 +23,7 @@
                 <option value="">All Roles</option>
                 <option value="farmer" {{ request('role') === 'farmer' ? 'selected' : '' }}>Farmers</option>
                 <option value="buyer" {{ request('role') === 'buyer' ? 'selected' : '' }}>Buyers</option>
+                <option value="investor" {{ request('role') === 'investor' ? 'selected' : '' }}>Investors</option>
                 <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admins</option>
             </select>
             <select name="status" class="px-4 py-2 bg-[#1e293b] border border-[#374151] text-white rounded-lg focus:ring-2 focus:ring-[#d4a853] focus:border-[#d4a853] outline-none text-sm">
@@ -49,6 +50,7 @@
                         <th class="text-left py-3 px-4 font-medium text-[#9ca3af]">User</th>
                         <th class="text-left py-3 px-4 font-medium text-[#9ca3af]">Role</th>
                         <th class="text-left py-3 px-4 font-medium text-[#9ca3af]">Farm / Business</th>
+                        <th class="text-left py-3 px-4 font-medium text-[#9ca3af]">Balance</th>
                         <th class="text-left py-3 px-4 font-medium text-[#9ca3af]">Status</th>
                         <th class="text-left py-3 px-4 font-medium text-[#9ca3af]">Joined</th>
                         <th class="text-right py-3 px-4 font-medium text-[#9ca3af]">Actions</th>
@@ -74,6 +76,9 @@
                             </td>
                             <td class="py-3 px-4 text-[#9ca3af]">
                                 {{ $user->farm_name ?? $user->business_name ?? '-' }}
+                            </td>
+                            <td class="py-3 px-4">
+                                <span class="font-medium text-[#10b981]">${{ number_format($user->balance, 2) }}</span>
                             </td>
                             <td class="py-3 px-4">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
