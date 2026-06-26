@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\FeedController;
+use App\Http\Controllers\StreamController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -114,4 +117,25 @@ Route::middleware('auth')->group(function () {
 
     // Reviews
     Route::post('/reviews', [App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+
+    // Feed
+    Route::get('/feed', [FeedController::class, 'index'])->name('feed.index');
+    Route::post('/feed', [FeedController::class, 'store'])->name('feed.store');
+    Route::post('/feed/{id}/like', [FeedController::class, 'like'])->name('feed.like');
+    Route::post('/feed/{id}/comment', [FeedController::class, 'comment'])->name('feed.comment');
+    Route::delete('/feed/{id}', [FeedController::class, 'destroy'])->name('feed.destroy');
+
+    // Streams
+    Route::get('/streams', [StreamController::class, 'index'])->name('streams.index');
+    Route::get('/streams/create', [StreamController::class, 'create'])->name('streams.create');
+    Route::post('/streams', [StreamController::class, 'store'])->name('streams.store');
+    Route::get('/streams/{id}', [StreamController::class, 'show'])->name('streams.show');
+    Route::post('/streams/{id}/like', [StreamController::class, 'like'])->name('streams.like');
+    Route::delete('/streams/{id}', [StreamController::class, 'destroy'])->name('streams.destroy');
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::patch('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
 });
