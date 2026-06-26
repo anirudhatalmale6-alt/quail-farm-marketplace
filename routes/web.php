@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\StreamController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/pricing', [SubscriptionController::class, 'plans'])->name('pricing');
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +42,11 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // Subscription
+    Route::get('/subscription', [SubscriptionController::class, 'mySubscription'])->name('subscription.status');
+    Route::post('/subscription/process', [SubscriptionController::class, 'processSubscription'])->name('subscription.process');
+    Route::get('/subscription/{planId}', [SubscriptionController::class, 'subscribe'])->name('subscription.subscribe');
 });
 
 /*
@@ -53,6 +61,14 @@ Route::prefix('farmer')->name('farmer.')->middleware(['auth', 'farmer'])->group(
     Route::get('/orders/{id}', [App\Http\Controllers\Farmer\OrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{id}/status', [App\Http\Controllers\Farmer\OrderController::class, 'updateStatus'])->name('orders.update-status');
     Route::patch('/orders/{id}/confirm-payment', [App\Http\Controllers\Farmer\OrderController::class, 'confirmPayment'])->name('orders.confirm-payment');
+
+    // Investments
+    Route::get('/investments', [App\Http\Controllers\Farmer\InvestmentController::class, 'index'])->name('investments.index');
+    Route::get('/investments/create', [App\Http\Controllers\Farmer\InvestmentController::class, 'create'])->name('investments.create');
+    Route::post('/investments', [App\Http\Controllers\Farmer\InvestmentController::class, 'store'])->name('investments.store');
+    Route::get('/investments/{id}', [App\Http\Controllers\Farmer\InvestmentController::class, 'show'])->name('investments.show');
+    Route::get('/investments/{id}/edit', [App\Http\Controllers\Farmer\InvestmentController::class, 'edit'])->name('investments.edit');
+    Route::put('/investments/{id}', [App\Http\Controllers\Farmer\InvestmentController::class, 'update'])->name('investments.update');
 });
 
 /*
@@ -102,6 +118,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/credits/{id}', [App\Http\Controllers\Admin\CreditController::class, 'show'])->name('credits.show');
     Route::patch('/credits/{id}/approve', [App\Http\Controllers\Admin\CreditController::class, 'approve'])->name('credits.approve');
     Route::patch('/credits/{id}/reject', [App\Http\Controllers\Admin\CreditController::class, 'reject'])->name('credits.reject');
+
+    // Investments management
+    Route::get('/investments', [App\Http\Controllers\Admin\InvestmentController::class, 'index'])->name('investments.index');
+    Route::get('/investments/{id}', [App\Http\Controllers\Admin\InvestmentController::class, 'show'])->name('investments.show');
+    Route::patch('/investments/{id}/review', [App\Http\Controllers\Admin\InvestmentController::class, 'review'])->name('investments.review');
 });
 
 /*
@@ -112,7 +133,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 Route::middleware('auth')->group(function () {
     // Messages
     Route::get('/messages', [App\Http\Controllers\MessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/unread-count', [App\Http\Controllers\MessageController::class, 'unreadCount'])->name('messages.unreadCount');
     Route::get('/messages/{userId}', [App\Http\Controllers\MessageController::class, 'show'])->name('messages.show');
+    Route::get('/messages/{userId}/fetch', [App\Http\Controllers\MessageController::class, 'getMessages'])->name('messages.fetch');
     Route::post('/messages', [App\Http\Controllers\MessageController::class, 'store'])->name('messages.store');
 
     // Reviews

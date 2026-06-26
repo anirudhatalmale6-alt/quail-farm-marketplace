@@ -44,6 +44,7 @@
                     <a href="#features" class="px-3 py-2 text-sm font-medium text-[#9ca3af] hover:text-[#d4a853] rounded-lg transition-colors">Features</a>
                     <a href="#how-it-works" class="px-3 py-2 text-sm font-medium text-[#9ca3af] hover:text-[#d4a853] rounded-lg transition-colors">How It Works</a>
                     <a href="#listings" class="px-3 py-2 text-sm font-medium text-[#9ca3af] hover:text-[#d4a853] rounded-lg transition-colors">Listings</a>
+                    <a href="{{ route('pricing') }}" class="px-3 py-2 text-sm font-medium text-[#9ca3af] hover:text-[#d4a853] rounded-lg transition-colors">Pricing</a>
                     @auth
                         @php
                             $dashUrl = auth()->user()->isAdmin() ? '/admin/dashboard' : (auth()->user()->isFarmer() ? '/farmer/dashboard' : '/buyer/dashboard');
@@ -70,6 +71,7 @@
             <a href="#features" @click="mobileMenu = false" class="block px-3 py-2 rounded-lg text-base font-medium text-[#9ca3af] hover:bg-[#1e293b] hover:text-[#d4a853]">Features</a>
             <a href="#how-it-works" @click="mobileMenu = false" class="block px-3 py-2 rounded-lg text-base font-medium text-[#9ca3af] hover:bg-[#1e293b] hover:text-[#d4a853]">How It Works</a>
             <a href="#listings" @click="mobileMenu = false" class="block px-3 py-2 rounded-lg text-base font-medium text-[#9ca3af] hover:bg-[#1e293b] hover:text-[#d4a853]">Listings</a>
+            <a href="{{ route('pricing') }}" @click="mobileMenu = false" class="block px-3 py-2 rounded-lg text-base font-medium text-[#9ca3af] hover:bg-[#1e293b] hover:text-[#d4a853]">Pricing</a>
             @auth
                 @php
                     $dashUrl = auth()->user()->isAdmin() ? '/admin/dashboard' : (auth()->user()->isFarmer() ? '/farmer/dashboard' : '/buyer/dashboard');
@@ -463,6 +465,47 @@
         </div>
     </section>
 
+    {{-- Pricing Preview Section --}}
+    <section id="pricing" class="py-20 sm:py-28 bg-[#111827]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold text-white">Simple, Transparent <span class="text-[#d4a853]">Pricing</span></h2>
+                <p class="mt-4 text-lg text-[#9ca3af]">Start free and upgrade when you're ready to scale your farm business.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+                {{-- Free Plan Preview --}}
+                <div class="bg-[#1e293b] border border-[#374151] rounded-2xl p-8 text-center">
+                    <h3 class="text-xl font-semibold text-white mb-2">Free</h3>
+                    <div class="mb-4">
+                        <span class="text-4xl font-bold text-white">$0</span>
+                        <span class="text-[#9ca3af] text-sm">/month</span>
+                    </div>
+                    <p class="text-sm text-[#9ca3af] mb-6">Up to 5 listings, basic marketplace access, messaging & community feed.</p>
+                    <a href="{{ url('/register') }}" class="block px-6 py-3 bg-[#374151] text-center rounded-xl text-sm font-semibold text-white hover:bg-[#4b5563] transition-colors">
+                        Get Started Free
+                    </a>
+                </div>
+
+                {{-- Pro Plan Preview --}}
+                <div class="relative bg-[#1e293b] border-2 border-[#d4a853] rounded-2xl p-8 text-center shadow-lg shadow-[#d4a853]/10">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+                        <span class="inline-flex items-center px-4 py-1 rounded-full text-xs font-bold bg-[#d4a853] text-[#0f1419] uppercase tracking-wider">Most Popular</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-[#d4a853] mt-2 mb-2">Pro</h3>
+                    <div class="mb-4">
+                        <span class="text-4xl font-bold text-white">$29.99</span>
+                        <span class="text-[#9ca3af] text-sm">/month</span>
+                    </div>
+                    <p class="text-sm text-[#9ca3af] mb-6">Unlimited listings, priority search, investment access, analytics & featured badge.</p>
+                    <a href="{{ route('pricing') }}" class="block px-6 py-3 bg-[#d4a853] text-center rounded-xl text-sm font-semibold text-[#0f1419] hover:bg-[#f59e0b] transition-colors shadow-lg shadow-[#d4a853]/20">
+                        View Full Comparison
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     {{-- Footer --}}
     <footer class="bg-[#0f1419]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -483,7 +526,7 @@
                     <ul class="space-y-3">
                         <li><a href="{{ url('/register?role=farmer') }}" class="text-sm text-[#9ca3af] hover:text-[#d4a853] transition-colors">Sell as Farmer</a></li>
                         <li><a href="{{ url('/register?role=buyer') }}" class="text-sm text-[#9ca3af] hover:text-[#d4a853] transition-colors">Buy Products</a></li>
-                        <li><a href="#" class="text-sm text-[#9ca3af] hover:text-[#d4a853] transition-colors">Pricing</a></li>
+                        <li><a href="{{ route('pricing') }}" class="text-sm text-[#9ca3af] hover:text-[#d4a853] transition-colors">Pricing</a></li>
                     </ul>
                 </div>
                 <div>

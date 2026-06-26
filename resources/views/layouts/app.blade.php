@@ -50,10 +50,14 @@
                             <a href="{{ route('admin.commissions.index') }}" class="px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.commissions.*') ? 'text-[#d4a853] border-b-2 border-[#d4a853]' : 'text-[#9ca3af] hover:text-[#d4a853]' }}">Commissions</a>
                             <a href="{{ route('admin.categories.index') }}" class="px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.categories.*') ? 'text-[#d4a853] border-b-2 border-[#d4a853]' : 'text-[#9ca3af] hover:text-[#d4a853]' }}">Categories</a>
                             <a href="{{ route('admin.credits.index') }}" class="px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.credits.*') ? 'text-[#d4a853] border-b-2 border-[#d4a853]' : 'text-[#9ca3af] hover:text-[#d4a853]' }}">Credits</a>
+                            <a href="{{ route('admin.investments.index') }}" class="px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.investments.*') ? 'text-[#d4a853] border-b-2 border-[#d4a853]' : 'text-[#9ca3af] hover:text-[#d4a853]' }}">Investments</a>
                         @elseif(auth()->user()->isFarmer())
                             <a href="{{ route('farmer.dashboard') }}" class="px-3 py-2 text-sm font-medium {{ request()->routeIs('farmer.dashboard') ? 'text-[#d4a853] border-b-2 border-[#d4a853]' : 'text-[#9ca3af] hover:text-[#d4a853]' }}">Dashboard</a>
                             <a href="{{ route('farmer.products.index') }}" class="px-3 py-2 text-sm font-medium {{ request()->routeIs('farmer.products.*') ? 'text-[#d4a853] border-b-2 border-[#d4a853]' : 'text-[#9ca3af] hover:text-[#d4a853]' }}">My Products</a>
                             <a href="{{ route('farmer.orders.index') }}" class="px-3 py-2 text-sm font-medium {{ request()->routeIs('farmer.orders.*') ? 'text-[#d4a853] border-b-2 border-[#d4a853]' : 'text-[#9ca3af] hover:text-[#d4a853]' }}">Orders</a>
+                            @if(auth()->user()->isPro() || auth()->user()->canAccessInvestments())
+                                <a href="{{ route('farmer.investments.index') }}" class="px-3 py-2 text-sm font-medium {{ request()->routeIs('farmer.investments.*') ? 'text-[#d4a853] border-b-2 border-[#d4a853]' : 'text-[#9ca3af] hover:text-[#d4a853]' }}">Investments</a>
+                            @endif
                         @elseif(auth()->user()->isBuyer())
                             <a href="{{ route('buyer.dashboard') }}" class="px-3 py-2 text-sm font-medium {{ request()->routeIs('buyer.dashboard') ? 'text-[#d4a853] border-b-2 border-[#d4a853]' : 'text-[#9ca3af] hover:text-[#d4a853]' }}">Dashboard</a>
                             <a href="{{ route('buyer.marketplace.index') }}" class="px-3 py-2 text-sm font-medium {{ request()->routeIs('buyer.marketplace.*') ? 'text-[#d4a853] border-b-2 border-[#d4a853]' : 'text-[#9ca3af] hover:text-[#d4a853]' }}">Marketplace</a>
@@ -81,6 +85,11 @@
                             <button @click="open = !open" class="flex items-center space-x-2 text-sm focus:outline-none">
                                 <img src="{{ auth()->user()->avatar }}" alt="" class="w-8 h-8 rounded-full border-2 border-[#d4a853]">
                                 <span class="hidden md:block text-[#9ca3af]">{{ auth()->user()->name }}</span>
+                                @if(auth()->user()->isPro())
+                                    <span class="hidden md:inline-flex px-1.5 py-0.5 text-[10px] font-bold bg-[#d4a853] text-[#0f1419] rounded uppercase">PRO</span>
+                                @else
+                                    <span class="hidden md:inline-flex px-1.5 py-0.5 text-[10px] font-bold bg-[#374151] text-[#9ca3af] rounded uppercase">FREE</span>
+                                @endif
                                 <svg class="w-4 h-4 text-[#9ca3af]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </button>
                             <div x-show="open" @click.away="open = false" x-cloak class="absolute right-0 mt-2 w-48 bg-[#1e293b] rounded-lg shadow-xl shadow-black/30 border border-[#374151] z-50">
@@ -121,10 +130,14 @@
                         <a href="{{ route('admin.commissions.index') }}" class="block px-3 py-2 rounded text-sm text-[#9ca3af] hover:bg-[#1e293b] hover:text-[#d4a853]">Commissions</a>
                         <a href="{{ route('admin.categories.index') }}" class="block px-3 py-2 rounded text-sm text-[#9ca3af] hover:bg-[#1e293b] hover:text-[#d4a853]">Categories</a>
                         <a href="{{ route('admin.credits.index') }}" class="block px-3 py-2 rounded text-sm text-[#9ca3af] hover:bg-[#1e293b] hover:text-[#d4a853]">Credits</a>
+                        <a href="{{ route('admin.investments.index') }}" class="block px-3 py-2 rounded text-sm text-[#9ca3af] hover:bg-[#1e293b] hover:text-[#d4a853]">Investments</a>
                     @elseif(auth()->user()->isFarmer())
                         <a href="{{ route('farmer.dashboard') }}" class="block px-3 py-2 rounded text-sm text-[#9ca3af] hover:bg-[#1e293b] hover:text-[#d4a853]">Dashboard</a>
                         <a href="{{ route('farmer.products.index') }}" class="block px-3 py-2 rounded text-sm text-[#9ca3af] hover:bg-[#1e293b] hover:text-[#d4a853]">My Products</a>
                         <a href="{{ route('farmer.orders.index') }}" class="block px-3 py-2 rounded text-sm text-[#9ca3af] hover:bg-[#1e293b] hover:text-[#d4a853]">Orders</a>
+                        @if(auth()->user()->isPro() || auth()->user()->canAccessInvestments())
+                            <a href="{{ route('farmer.investments.index') }}" class="block px-3 py-2 rounded text-sm text-[#9ca3af] hover:bg-[#1e293b] hover:text-[#d4a853]">Investments</a>
+                        @endif
                     @elseif(auth()->user()->isBuyer())
                         <a href="{{ route('buyer.dashboard') }}" class="block px-3 py-2 rounded text-sm text-[#9ca3af] hover:bg-[#1e293b] hover:text-[#d4a853]">Dashboard</a>
                         <a href="{{ route('buyer.marketplace.index') }}" class="block px-3 py-2 rounded text-sm text-[#9ca3af] hover:bg-[#1e293b] hover:text-[#d4a853]">Marketplace</a>

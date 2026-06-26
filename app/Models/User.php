@@ -32,6 +32,8 @@ class User extends Authenticatable
         'bio',
         'farm_name',
         'business_name',
+        'subscription_plan',
+        'is_featured',
     ];
 
     /**
@@ -151,5 +153,69 @@ class User extends Authenticatable
     public function transportOptions()
     {
         return $this->hasMany(TransportOption::class, 'farmer_id');
+    }
+
+    /**
+     * Get the user's active subscription.
+     */
+    public function subscription()
+    {
+        return $this->hasOne(UserSubscription::class)->where('status', 'active')->latest();
+    }
+
+    /**
+     * Get the user's investment applications.
+     */
+    public function investmentApplications()
+    {
+        return $this->hasMany(InvestmentApplication::class);
+    }
+
+    /**
+     * Check if the user has a Pro subscription.
+     */
+    public function isPro(): bool
+    {
+        return $this->subscription_plan === 'pro';
+    }
+
+    /**
+     * Check if the user has a Free subscription.
+     */
+    public function isFree(): bool
+    {
+        return $this->subscription_plan === 'free';
+    }
+
+    /**
+     * Check if the user can access investment features.
+     */
+    public function canAccessInvestments(): bool
+    {
+        return $this->isPro();
+    }
+
+    /**
+     * Check if the user can access credit features.
+     */
+    public function canAccessCredit(): bool
+    {
+        return $this->isPro();
+    }
+
+    /**
+     * Check if the user can access analytics.
+     */
+    public function canAccessAnalytics(): bool
+    {
+        return $this->isPro();
+    }
+
+    /**
+     * Get maximum number of listings allowed.
+     */
+    public function getMaxListings(): ?int
+    {
+        return $this->isPro() ? null : 5;
     }
 }

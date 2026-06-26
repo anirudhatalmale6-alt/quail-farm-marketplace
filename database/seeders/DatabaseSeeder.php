@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\CommissionSetting;
 use App\Models\Product;
+use App\Models\SubscriptionPlan;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -239,6 +240,54 @@ class DatabaseSeeder extends Seeder
             'min_order' => 1,
             'images' => [],
             'status' => 'active',
+        ]);
+
+        // --- Subscription Plans ---
+        SubscriptionPlan::create([
+            'name' => 'Free',
+            'slug' => 'free',
+            'description' => 'Get started with the basics. Perfect for new farmers joining the marketplace.',
+            'price' => 0.00,
+            'billing_cycle' => 'monthly',
+            'max_listings' => 5,
+            'features' => [
+                'Up to 5 product listings',
+                'Basic marketplace access',
+                'Messaging system',
+                'Community feed access',
+            ],
+            'is_featured' => false,
+            'priority_search' => false,
+            'credit_access' => false,
+            'investment_access' => false,
+            'analytics_access' => false,
+            'is_active' => true,
+        ]);
+
+        SubscriptionPlan::create([
+            'name' => 'Pro',
+            'slug' => 'pro',
+            'description' => 'Everything you need to scale your quail farming business.',
+            'price' => 29.99,
+            'billing_cycle' => 'monthly',
+            'max_listings' => null,
+            'features' => [
+                'Unlimited product listings',
+                'Full marketplace access',
+                'Messaging system',
+                'Community feed access',
+                'Priority search placement',
+                'Investment applications',
+                'Advanced analytics',
+                'Featured profile badge',
+                'Credit system access',
+            ],
+            'is_featured' => true,
+            'priority_search' => true,
+            'credit_access' => true,
+            'investment_access' => true,
+            'analytics_access' => true,
+            'is_active' => true,
         ]);
 
         // --- Commission Brackets ---
