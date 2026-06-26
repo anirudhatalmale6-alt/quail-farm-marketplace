@@ -75,16 +75,16 @@
         </div>
 
         {{-- Pricing & Inventory --}}
-        <div class="bg-[#1e293b] rounded-xl shadow-sm border border-[#374151] p-6">
+        <div class="bg-[#1e293b] rounded-xl shadow-sm border border-[#374151] p-6" x-data="{ onSale: {{ old('is_on_sale') ? 'true' : 'false' }}, origPrice: '{{ old('price', '') }}', salePrice: '{{ old('sale_price', '') }}' }">
             <h2 class="text-lg font-semibold text-white mb-4">Pricing & Inventory</h2>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {{-- Price --}}
+                {{-- Original Price --}}
                 <div>
-                    <label for="price" class="block text-sm font-medium text-gray-300 mb-1">Price ($) <span class="text-red-500">*</span></label>
+                    <label for="price" class="block text-sm font-medium text-gray-300 mb-1">Original Price ($) <span class="text-red-500">*</span></label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">$</span>
-                        <input type="number" name="price" id="price" value="{{ old('price') }}" step="0.01" min="0.01" required
+                        <input type="number" name="price" id="price" x-model="origPrice" value="{{ old('price') }}" step="0.01" min="0.01" required
                             class="w-full pl-8 pr-4 py-2.5 bg-[#1e293b] border border-[#374151] rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#d4a853] focus:border-[#d4a853] transition-colors"
                             placeholder="0.00">
                     </div>
@@ -100,7 +100,44 @@
                         <option value="dozen" class="bg-[#1e293b]" {{ old('unit') == 'dozen' ? 'selected' : '' }}>Dozen (12)</option>
                         <option value="tray" class="bg-[#1e293b]" {{ old('unit') == 'tray' ? 'selected' : '' }}>Tray</option>
                         <option value="crate" class="bg-[#1e293b]" {{ old('unit') == 'crate' ? 'selected' : '' }}>Crate</option>
+                        <option value="pair" class="bg-[#1e293b]" {{ old('unit') == 'pair' ? 'selected' : '' }}>Pair</option>
+                        <option value="each" class="bg-[#1e293b]" {{ old('unit') == 'each' ? 'selected' : '' }}>Each</option>
+                        <option value="kg" class="bg-[#1e293b]" {{ old('unit') == 'kg' ? 'selected' : '' }}>Kilogram</option>
+                        <option value="lb" class="bg-[#1e293b]" {{ old('unit') == 'lb' ? 'selected' : '' }}>Pound</option>
+                        <option value="bag" class="bg-[#1e293b]" {{ old('unit') == 'bag' ? 'selected' : '' }}>Bag</option>
                     </select>
+                </div>
+
+                {{-- Sale Toggle --}}
+                <div class="sm:col-span-2">
+                    <label class="flex items-center cursor-pointer gap-3">
+                        <input type="hidden" name="is_on_sale" value="0">
+                        <input type="checkbox" name="is_on_sale" value="1" x-model="onSale"
+                            class="w-5 h-5 rounded border-[#374151] bg-[#1e293b] text-[#d4a853] focus:ring-[#d4a853]">
+                        <span class="text-sm font-medium text-gray-300">Enable sale / price reduction</span>
+                    </label>
+                </div>
+
+                {{-- Sale Price (shown when on sale) --}}
+                <div x-show="onSale" x-cloak>
+                    <label for="sale_price" class="block text-sm font-medium text-gray-300 mb-1">Sale Price ($) <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-[#10b981]">$</span>
+                        <input type="number" name="sale_price" id="sale_price" x-model="salePrice" value="{{ old('sale_price') }}" step="0.01" min="0.01"
+                            class="w-full pl-8 pr-4 py-2.5 bg-[#1e293b] border border-[#10b981]/50 rounded-lg text-[#10b981] placeholder-gray-500 focus:ring-2 focus:ring-[#10b981] focus:border-[#10b981] transition-colors"
+                            placeholder="0.00">
+                    </div>
+                </div>
+
+                {{-- Discount Preview --}}
+                <div x-show="onSale && origPrice > 0 && salePrice > 0 && salePrice < origPrice" x-cloak class="flex items-center gap-3">
+                    <div class="bg-[#ef4444]/10 border border-[#ef4444]/30 rounded-lg px-4 py-2.5 flex items-center gap-2">
+                        <span class="text-[#ef4444] font-bold text-lg" x-text="Math.round(((origPrice - salePrice) / origPrice) * 100) + '% OFF'"></span>
+                    </div>
+                    <div class="text-sm">
+                        <span class="text-[#6b7280] line-through" x-text="'$' + parseFloat(origPrice).toFixed(2)"></span>
+                        <span class="text-[#10b981] font-bold ml-1" x-text="'$' + parseFloat(salePrice).toFixed(2)"></span>
+                    </div>
                 </div>
 
                 {{-- Quantity Available --}}

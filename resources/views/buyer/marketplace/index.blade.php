@@ -79,6 +79,15 @@
                     </span>
                 </div>
                 @endif
+
+                {{-- Sale Badge --}}
+                @if($product->is_on_sale && $product->sale_price)
+                <div class="absolute top-3 right-3">
+                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-bold bg-[#ef4444] text-white shadow-lg">
+                        {{ $product->discount_percent }}% OFF
+                    </span>
+                </div>
+                @endif
             </div>
 
             {{-- Product Info --}}
@@ -109,7 +118,12 @@
                 {{-- Price & Order --}}
                 <div class="flex items-center justify-between mt-3 pt-3 border-t border-[#374151]/50">
                     <div>
-                        <span class="text-lg font-bold text-[#d4a853]">${{ number_format($product->price, 2) }}</span>
+                        @if($product->is_on_sale && $product->sale_price)
+                            <span class="text-xs text-[#6b7280] line-through">${{ number_format($product->price, 2) }}</span>
+                            <span class="text-lg font-bold text-[#10b981]">${{ number_format($product->sale_price, 2) }}</span>
+                        @else
+                            <span class="text-lg font-bold text-[#d4a853]">${{ number_format($product->price, 2) }}</span>
+                        @endif
                         <span class="text-xs text-[#9ca3af]">/ {{ $product->unit }}</span>
                     </div>
                     <span class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-[#9ca3af] bg-[#374151]/50 rounded-lg group-hover:bg-[#d4a853] group-hover:text-[#0f1419] transition-colors">

@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description');
             $table->decimal('price', 10, 2);
+            $table->decimal('sale_price', 10, 2)->nullable();
+            $table->boolean('is_on_sale')->default(false);
             $table->enum('unit', ['piece', 'dozen', 'tray', 'crate', 'pair', 'each', 'kg', 'lb', 'bag']);
             $table->integer('quantity_available');
             $table->integer('min_order')->default(1);

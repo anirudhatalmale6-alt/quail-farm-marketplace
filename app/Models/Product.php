@@ -21,6 +21,8 @@ class Product extends Model
         'slug',
         'description',
         'price',
+        'sale_price',
+        'is_on_sale',
         'unit',
         'quantity_available',
         'min_order',
@@ -39,8 +41,21 @@ class Product extends Model
         return [
             'images' => 'array',
             'price' => 'decimal:2',
+            'sale_price' => 'decimal:2',
+            'is_on_sale' => 'boolean',
             'featured' => 'boolean',
         ];
+    }
+
+    public function getActivePriceAttribute(): float
+    {
+        return ($this->is_on_sale && $this->sale_price) ? (float)$this->sale_price : (float)$this->price;
+    }
+
+    public function getDiscountPercentAttribute(): ?int
+    {
+        if (!$this->is_on_sale || !$this->sale_price || $this->price <= 0) return null;
+        return (int) round((($this->price - $this->sale_price) / $this->price) * 100);
     }
 
     /**
