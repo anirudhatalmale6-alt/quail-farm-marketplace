@@ -6,6 +6,7 @@ use App\Http\Controllers\FeedController;
 use App\Http\Controllers\StreamController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +20,9 @@ Route::get('/', function () {
 });
 
 Route::get('/pricing', [SubscriptionController::class, 'plans'])->name('pricing');
+Route::get('/search', [SearchController::class, 'search'])->name('search');
+Route::get('/search/live', [SearchController::class, 'search'])->name('search.live');
+Route::get('/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
 
 /*
 |--------------------------------------------------------------------------
